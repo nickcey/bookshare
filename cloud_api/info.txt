@@ -1,2 +1,0 @@
-pour lancer le serveur : python api_server.py
-pour le mot de passe il faut : un caactère spécial,une majuscule,un chiffre 
