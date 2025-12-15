@@ -1,0 +1,9 @@
+après extraction, copier le dossier dans documents puis ouvrir le dossier avec vscode.
+il faut installer : 
+- pip install Flask mysql-connector-python bcrypt
+- 
+
+pour lancer le serveur : 
+   python serveur.py
+pour ouvrir l'interface web dans le navigateur : 
+   http://127.0.0.1:5000

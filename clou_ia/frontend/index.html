@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HANI Cloud System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'nick-primary': '#4CAF50', 
+                        'nick-dark': '#1E3A8A', 
+                        'nick-accent': '#FFC107', 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <header class="bg-nick-dark text-white shadow-md p-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-2xl font-bold">
+                    <span class="text-nick-primary">Nick</span> Cloud
+                </h1>
+                <div id="nav-public" class="flex space-x-4">
+                    <button onclick="showView('home')" class="hover:text-gray-300">Accueil</button>
+                    <button onclick="showView('register')" class="hover:text-gray-300">S'inscrire</button>
+                    <button onclick="showView('login')" class="hover:text-gray-300">Se Connecter</button>
+                </div>
+            </div>
+            
+            <div id="nav-private" class="hidden flex items-center">
+                <span id="current-vm-display" class="text-white mr-4 text-lg font-semibold"></span>
+                <button id="logout-btn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                    Déconnexion
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6 flex-grow">
+
+        <section id="view-home" class="view-section text-center py-20 bg-white rounded-lg shadow-lg">
+            <h2 class="text-5xl font-extrabold mb-4 text-nick-dark">Bienvenue sur Nick Cloud System</h2>
+            <p class="text-xl text-gray-600 mb-8">Votre plateforme Cloud P2P sécurisée et distribuée.</p>
+            <div class="space-x-4">
+                <button onclick="showView('login')" class="bg-nick-primary hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300">
+                    Se connecter
+                </button>
+                <button onclick="showView('register')" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300">
+                    Créer un compte
+                </button>
+            </div>
+        </section>
+
+        <section id="view-register" class="view-section hidden max-w-lg mx-auto bg-white p-8 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold mb-6 text-center text-nick-dark">Inscription de ma VM</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="reg-vm-name" class="block text-sm font-medium text-gray-700">Nom de la VM (Identifiant)</label>
+                    <input type="text" id="reg-vm-name" placeholder="Ex: wolf" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="reg-vm-email" class="block text-sm font-medium text-gray-700">Email (pour la confirmation)</label>
+                    <input type="email" id="reg-vm-email" placeholder="email@exemple.com" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="reg-vm-password" class="block text-sm font-medium text-gray-700">Mot de passe (Min. 8 caractères)</label>
+                    <input type="password" id="reg-vm-password" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm">
+                </div>
+                 <div>
+                    <label for="reg-vm-storage" class="block text-sm font-medium text-gray-700">Stockage initial (en MB)</label>
+                    <input type="text" id="reg-vm-storage" value="500" placeholder="Ex: 500 (MB)" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm">
+                </div>
+                <button id="register-btn" class="w-full bg-nick-primary hover:bg-green-700 text-white font-bold py-3 rounded-md transition duration-200">
+                    S'inscrire & Obtenir le Code
+                </button>
+                <p id="reg-message" class="text-center text-sm"></p>
+            </div>
+            <p class="mt-4 text-center text-sm text-gray-600">
+                Déjà un compte ? <button onclick="showView('login')" class="text-nick-primary hover:text-nick-dark font-medium">Connectez-vous ici</button>
+            </p>
+        </section>
+
+        <section id="view-confirm" class="view-section hidden max-w-lg mx-auto bg-white p-8 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold mb-6 text-center text-nick-dark">Confirmation Email</h2>
+            <p class="mb-4 text-center text-gray-600">Un code de confirmation a été envoyé à : <strong id="confirm-email-display" class="text-nick-primary"></strong></p>
+            <div class="space-y-4">
+                <div>
+                    <label for="confirm-code-input" class="block text-sm font-medium text-gray-700">Code de Confirmation</label>
+                    <input type="text" id="confirm-code-input" placeholder="Entrez le code ici" class="mt-1 block w-full p-3 text-center text-lg border-2 border-nick-primary rounded-md shadow-sm">
+                </div>
+                <button id="confirm-code-btn" class="w-full bg-nick-primary hover:bg-green-700 text-white font-bold py-3 rounded-md transition duration-200">
+                    Confirmer et Créer le Compte
+                </button>
+                <p id="confirm-message" class="text-center text-sm"></p>
+            </div>
+        </section>
+
+
+        <section id="view-login" class="view-section hidden max-w-lg mx-auto bg-white p-8 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold mb-6 text-center text-nick-dark">🔗 Connexion à ma VM</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="login-vm-name" class="block text-sm font-medium text-gray-700">Nom de la VM</label>
+                    <input type="text" id="login-vm-name" placeholder="Ex: wolf" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="login-vm-password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                    <input type="password" id="login-vm-password" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm">
+                </div>
+                <button id="login-btn" class="w-full bg-nick-primary hover:bg-green-700 text-white font-bold py-3 rounded-md transition duration-200">
+                    Accéder à ma VM
+                </button>
+                <p id="login-message" class="text-center text-sm text-red-500"></p>
+            </div>
+            <p class="mt-4 text-center text-sm text-gray-600">
+                Pas de compte ? <button onclick="showView('register')" class="text-nick-primary hover:text-nick-dark font-medium">Inscrivez-vous ici</button>
+            </p>
+        </section>
+
+
+        <section id="view-dashboard" class="view-section hidden bg-white p-8 rounded-lg shadow-xl">
+            
+            <h2 class="text-3xl font-bold mb-6 text-nick-dark border-b pb-2">
+                Compte Cloud : <span id="dashboard-vm-name" class="text-nick-primary"></span>
+            </h2>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2 text-gray-700">Espace de Stockage</h3>
+                <div class="relative pt-1">
+                    <div class="flex mb-2 items-center justify-between">
+                        <div class="text-right">
+                            <span id="dashboard-storage-info" class="text-xs font-semibold inline-block text-nick-dark">
+                                Utilisé: 0MB / Total: 500MB
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex h-2.5 mb-4 overflow-hidden text-xs flex-col rounded bg-gray-200">
+                        <div style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-nick-dark">⬆️ Uploader & Partager un Fichier</h3>
+                    <div class="space-y-4">
+                        
+                        <label for="upload-file-input" class="block text-sm font-medium text-gray-700">Sélectionner un Fichier</label>
+                        <input type="file" id="upload-file-input" class="w-full p-2 border rounded">
+
+                        <p id="selected-file-name" class="text-sm text-gray-500 italic"></p>
+                        
+                        <div class="space-y-2 pt-2">
+                            <h4 class="text-sm font-medium text-gray-700">Action souhaitée :</h4>
+                            
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="upload-option" value="store_only" id="option-store-only" checked>
+                                <span>Stocker uniquement </span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="upload-option" value="share_only" id="option-share-only">
+                                <span>Partager uniquement</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="radio" name="upload-option" value="store_and_share" id="option-store-and-share">
+                                <span>Stocker & Partager </span>
+                            </label>
+                        </div>
+
+                        <button id="upload-btn" class="w-full bg-nick-accent hover:bg-yellow-600 text-white font-bold py-2 rounded transition duration-200">
+                            Démarrer l'Opération
+                        </button>
+                        
+                        <p id="upload-message" class="text-center text-sm"></p>
+                    </div>
+                </div>
+
+                <div class="col-span-1 border-l pl-4 border-gray-200">
+                    <h3 class="text-xl font-semibold mb-3 text-nick-dark">⬇️ Demander un Fichier</h3>
+                    <div class="space-y-4">
+                        
+                        <label for="request-filename" class="block text-sm font-medium text-gray-700">Nom du fichier à rechercher</label>
+                        <input type="text" id="request-filename" placeholder="Ex: rapport_final.pdf" class="w-full p-2 border rounded">
+                        
+                        <button id="request-btn" class="w-full bg-nick-primary hover:bg-nick-dark text-white font-bold py-2 rounded transition duration-200">
+                            Requête Cloud
+                        </button>
+                        
+                        <p id="request-message" class="text-center text-sm"></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-3 text-nick-dark border-b pb-2">📂 Mes Fichiers sur le Cloud</h3>
+                <div id="dashboard-file-list" class="bg-gray-50 p-4 rounded-lg min-h-[100px]">
+                    <p class="text-center text-gray-500">Aucun fichier n'a été enregistré ou téléchargé.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="static/main.js"></script>
+</body>
+</html>
